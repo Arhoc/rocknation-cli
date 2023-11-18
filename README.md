@@ -20,4 +20,5 @@ First, you need to install the required libraries with your favourite package ma
 - PCRE
 
 And then you compile it like:
-```gcc main.c -o rocknation-cli -lcurl -luriparser -lpcre
+```
+gcc main.c -o rocknation-cli -lcurl -luriparser -lpcre
