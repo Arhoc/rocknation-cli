@@ -12,3 +12,12 @@ Since this is just experimental for now, there could be changes, i'm working on 
         download-song <URL> [OUTPUT_FILE]
         download-album <URL> [OUTPUT_FOLDER]
 ```
+
+## Installation
+First, you need to install the required libraries with your favourite package manager:
+- Libcurl
+- Uriparser
+- PCRE
+
+And then you compile it like:
+```gcc main.c -o rocknation-cli -lcurl -luriparser -lpcre
