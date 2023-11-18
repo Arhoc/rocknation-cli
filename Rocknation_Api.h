@@ -9,8 +9,6 @@
 #include <curl/curl.h>
 #include <pcre.h>
 #include <uriparser/Uri.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 
 #define MAX_NAME_LENGTH 100
 #define MAX_URL_LENGTH 512
@@ -506,35 +504,6 @@ int download_file(const char *url, char *output_file) {
     }
 
     return 0;
-}
-
-void play_mp3(const char *mp3_filename) {
-    // Inicializar SDL y SDL_mixer
-    SDL_Init(SDL_INIT_AUDIO);
-    Mix_Init(MIX_INIT_MP3);
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-
-    // Cargar y reproducir el archivo MP3 local
-    Mix_Music *music = Mix_LoadMUS(mp3_filename);
-    if (!music) {
-        fprintf(stderr, "Error al cargar el archivo: %s\n", Mix_GetError());
-        return;
-    }
-
-    Mix_PlayMusic(music, 1);
-
-    // Esperar hasta que termine la canción
-    while (Mix_PlayingMusic()) {
-        SDL_Delay(100);
-    }
-
-    // Liberar recursos de SDL_mixer
-    Mix_FreeMusic(music);
-    Mix_CloseAudio();
-    Mix_Quit();
-
-    // Cerrar SDL
-    SDL_Quit();
 }
 
 #endif
