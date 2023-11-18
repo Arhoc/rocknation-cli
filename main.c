@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <errno.h>
 #include <string.h>
 #include "Rocknation_Api.h"
+
+#ifdef _WIN32
+    #include <direct.h>
+    #define mkdir(directory, mode) _mkdir(directory)
+#else 
+    #include <sys/stat.h>
+    #include <sys/types.h>
+#endif
 
 void print_usage() {
     puts("[USAGE]");
@@ -58,6 +68,25 @@ void downloadAlbum(const char *albumUrl, const char *outputFolder) {
             printf("[?] Downloading...\n\t[*] Name: %s\n\t[*] Album: %s\n\t[*] Artist: %s\n-----\n", songList.songs[i].name, songList.songs[i].album, songList.songs[i].artist);
 
             if (outputFolder != NULL) {
+                DIR* dir = opendir(outputFolder);
+
+                if (ENOENT == errno) {
+                    #ifdef _WIN32
+                        if (_mkdir(outputFolder) == 0) {
+                            printf("[?] Seems like directory didn't exist yet, so we created it.\n");
+                        } else {
+                            printf("[!] Error creating the directory.\n");
+                        }
+                    #else
+                        if (mkdir(outputFolder, 0777) == 0) {
+                            printf("[?] Seems like directory didn't exist yet, so we created it.\n");
+                        } else {
+                            printf("[!] Error creating the directory.\n");
+                        }
+                    #endif
+
+                }
+
                 char outputFilePath[256] = "";
                 strcat(outputFilePath, outputFolder);
                 strcat(outputFilePath, "/");
