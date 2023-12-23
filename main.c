@@ -17,9 +17,11 @@
     #define PATH_SEPARATOR '/'
 #endif
 
+char program_name[256];
+
 void print_usage() {
     puts("[USAGE]");
-    puts("./rocknation-cli <option> <argument_to_option>\n");
+    printf("%s <option> <argument_to_option>\n", program_name);
     puts("[OPTIONS]");
     puts("\tsearch-band <BAND_NAME>");
     puts("\tlist-albums <BAND_NAME/BAND_URL>");
@@ -105,6 +107,8 @@ void downloadAlbum(const char *albumUrl, const char *outputFolder) {
 }
 
 int main(int argc, char *argv[]) {
+    strcpy(program_name, argv[0]);
+
     if (argc < 3) {
         print_usage();
         return 1;

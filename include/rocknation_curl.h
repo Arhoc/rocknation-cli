@@ -6,6 +6,7 @@
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
 void search_band(const char *search_text, BandInfoList *band_list);
 void get_albums(char *band_url, AlbumInfoList *album_list);
+void get_albums_by_name(char *band_name, AlbumInfoList *album_list);
 void get_songs(const char *album_url, SongInfoList *song_list);
 int download_file(const char *url, char *output_file);
 
