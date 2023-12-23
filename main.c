@@ -109,11 +109,6 @@ void downloadAlbum(const char *albumUrl, const char *outputFolder) {
 int main(int argc, char *argv[]) {
     strncpy(program_name, argv[0], strlen(argv[0]) + 1);
 
-    if (argc < 3) {
-        print_usage();
-        return 1;
-    }
-
     if (strcmp(argv[1], "search-band") == 0) {
         if (argc < 3) {
             printf("Missing band Name/URL.\n");
