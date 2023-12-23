@@ -7,8 +7,8 @@ Since this is just experimental for now, there could be changes, i'm working on 
 ./rocknation-cli <option> <argument_to_option>
 
 [OPTIONS]
-        search-band <NAME>
-        list-albums <BAND_URL>
+        search-band <BAND_NAME>
+        list-albums <BAND_NAME/BAND_URL>
         download-song <URL> [OUTPUT_FILE]
         download-album <URL> [OUTPUT_FOLDER]
 ```
