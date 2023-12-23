@@ -115,8 +115,19 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(argv[1], "search-band") == 0) {
+        if (argc < 3) {
+            printf("Missing band Name/URL.\n");
+            print_usage();
+            return 1;
+        }
+
         searchAndPrintBands(argv[2]);
     } else if (strcmp(argv[1], "list-albums") == 0) {
+        if (argc < 3) {
+            printf("Missing album URL.\n");
+            print_usage();
+            return 1;
+        }
         listAndPrintAlbums(argv[2]);
     } else if (strcmp(argv[1], "download-song") == 0) {
         if (argc < 3) {
