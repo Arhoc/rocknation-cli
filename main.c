@@ -107,7 +107,7 @@ void downloadAlbum(const char *albumUrl, const char *outputFolder) {
 }
 
 int main(int argc, char *argv[]) {
-    strcpy(program_name, argv[0]);
+    strncpy(program_name, argv[0], sizeof(argv[0]));
 
     if (argc < 3) {
         print_usage();
