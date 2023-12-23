@@ -21,8 +21,8 @@ void print_usage() {
     puts("[USAGE]");
     puts("./rocknation-cli <option> <argument_to_option>\n");
     puts("[OPTIONS]");
-    puts("\tsearch-band <NAME>");
-    puts("\tlist-albums <BAND_URL>");
+    puts("\tsearch-band <BAND_NAME>");
+    puts("\tlist-albums <BAND_NAME/BAND_URL>");
     puts("\tdownload-song <URL> [OUTPUT_FILE]");
     puts("\tdownload-album <URL> [OUTPUT_FOLDER]");
 }
@@ -42,9 +42,14 @@ void searchAndPrintBands(const char *searchQuery) {
     }
 }
 
-void listAndPrintAlbums(const char *bandUrl) {
+void listAndPrintAlbums(const char *band) {
     AlbumInfoList albumList;
-    get_albums(bandUrl, &albumList);
+
+    if(strstr(band, "rocknation.su") != NULL) {
+        get_albums(band, &albumList);
+    } else {
+        get_albums_by_name(band, &albumList);
+    }
 
     if (albumList.count > 0) {
         for (int i = 0; i < albumList.count; i++) {

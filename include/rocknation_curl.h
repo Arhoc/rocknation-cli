@@ -226,6 +226,15 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
     }
 }
 
+void get_albums_by_name(char* band_name, AlbumInfoList* album_list) {
+    BandInfoList band_list;
+    search_band(band_name, &band_list);
+
+     if (band_list.count > 0) {
+        get_albums(band_list.bands[0].url, album_list);
+     }
+}
+
 void get_songs(const char *album_url, SongInfoList *song_list) {
     /*
      * Function  : void get_songs(const char *album_url, SongInfoList *song_list)
