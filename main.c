@@ -25,6 +25,7 @@ void print_usage() {
     puts("[OPTIONS]");
     puts("\tsearch-band <BAND_NAME>");
     puts("\tlist-albums <BAND_NAME/BAND_URL>");
+    puts("\t(Not Added yet) list-songs <ALBUM_URL>");
     puts("\tdownload-song <URL> [OUTPUT_FILE]");
     puts("\tdownload-album <URL> [OUTPUT_FOLDER]");
 }
@@ -60,6 +61,12 @@ void listAndPrintAlbums(const char *band) {
     } else {
         printf("[!] No album found for that band.\n");
     }
+}
+
+void listAndPrintSongs(const char* album_url) {
+    SongInfoList song_list;
+
+    //if album_url() {}
 }
 
 void downloadSong(const char *songUrl, const char *outputFile) {
