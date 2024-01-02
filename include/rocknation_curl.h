@@ -1,6 +1,6 @@
 // rocknation_curl.h
 #pragma once
-#include "rocknation_types.h"  
+#include "rocknation_types.h"
 #include "rocknation_utils.h"
 
 static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp);
@@ -10,8 +10,8 @@ void get_albums_by_name(char *band_name, AlbumInfoList *album_list);
 void get_songs(const char *album_url, SongInfoList *song_list);
 int download_file(const char *url, char *output_file);
 
-
-static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
     /* Function  : static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
      * Input     : contents - pointer to the received data
      *             size - size of each data element
@@ -20,13 +20,14 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
      * Output    : Returns the total size of the received data (in bytes)
      * Procedure : This function is a callback used with libcurl to handle the received data. It is designed to be used as the write callback for CURLOPT_WRITEFUNCTION option. The function reallocates memory to store the received data and updates the MemoryStruct structure accordingly. If a memory allocation error occurs, an error message is printed to stderr.
      */
-    
+
     size_t real_size = size * nmemb;
     MemoryStruct *mem = (MemoryStruct *)userp;
 
     // Reallocate memory to accommodate new data
     char *ptr = realloc(mem->memory, mem->size + real_size + 1);
-    if (ptr == NULL) {
+    if (ptr == NULL)
+    {
         // Error: Memory allocation failure
         fprintf(stderr, "Error de asignación de memoria\n");
         return 0;
@@ -48,8 +49,8 @@ static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, voi
     return real_size;
 }
 
-
-void search_band(const char *search_text, BandInfoList *band_list) {
+void search_band(const char *search_text, BandInfoList *band_list)
+{
     /*
      * Function  : void search_band(const char *search_text, BandInfoList *band_list)
      * Input     : search_text - pointer to the text used for band search
@@ -57,7 +58,7 @@ void search_band(const char *search_text, BandInfoList *band_list) {
      * Output    : Updates the band_list with search results
      * Procedure : This function searches for bands on rocknation.su based on the provided search_text. It uses libcurl to perform an HTTP request, processes the HTML response using PCRE regular expressions, and populates the BandInfoList structure with the found bands.
      */
-    
+
     CURL *curl;
     CURLcode res;
 
@@ -70,10 +71,12 @@ void search_band(const char *search_text, BandInfoList *band_list) {
     // Add other headers here
 
     curl = curl_easy_init();
-    if (curl) {
+    if (curl)
+    {
         char url[] = "https://rocknation.su/mp3/searchresult/";
         char postdata[MAX_URL_LENGTH];
-        snprintf(postdata, sizeof(postdata), "text_mp3=%s&enter_mp3=Search", search_text);
+        snprintf(postdata, sizeof(postdata), "text_mp3=%s&enter_mp3=Search", url_encode_spaces(search_text));
+        printf("DEBUG: %s\n", url_encode_spaces(postdata)); // DEBUG
 
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -83,7 +86,8 @@ void search_band(const char *search_text, BandInfoList *band_list) {
 
         res = curl_easy_perform(curl);
 
-        if (res == CURLE_OK) {
+        if (res == CURLE_OK)
+        {
             const char *pattern = "<a href=\"(\\/mp3\\/band-[0-9]+)\">([a-zA-Z0-9 \\/]+)<\\/a><\\/td><td>([a-zA-Z0-9 ]+)<\\/td>";
             const int options = PCRE_CASELESS;
 
@@ -92,13 +96,15 @@ void search_band(const char *search_text, BandInfoList *band_list) {
             int erroffset;
 
             re = pcre_compile(pattern, options, &error, &erroffset, NULL);
-            if (re != NULL) {
+            if (re != NULL)
+            {
                 int ovector[30];
                 int rc;
                 band_list->count = 0; // Counter for bands found
 
                 rc = pcre_exec(re, NULL, chunk.memory, chunk.size, 0, 0, ovector, 30);
-                while (rc >= 0 && band_list->count < 10) {
+                while (rc >= 0 && band_list->count < 10)
+                {
                     char *band_url;
                     char *band_name;
                     char *genre;
@@ -134,8 +140,8 @@ void search_band(const char *search_text, BandInfoList *band_list) {
     }
 }
 
-
-void get_albums(char *band_url, AlbumInfoList *album_list) {
+void get_albums(char *band_url, AlbumInfoList *album_list)
+{
     /*
      * Function  : void get_albums(char *band_url, AlbumInfoList *album_list)
      * Input     : band_url - pointer to the URL of the band
@@ -143,11 +149,12 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
      * Output    : Updates the album_list with album information
      * Procedure : This function retrieves the list of albums for a given band from rocknation.su. It performs HTTP requests to each page of the band's albums, processes the HTML response using PCRE regular expressions, and populates the AlbumInfoList structure with the found albums.
      */
-    
+
     int page_index = 1; // Índice de la página
     album_list->count = 0;
 
-    while (1) {
+    while (1)
+    {
         char page_url[MAX_URL_LENGTH];
         snprintf(page_url, sizeof(page_url), "%s/%d", band_url, page_index);
 
@@ -162,7 +169,8 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
         headers = curl_slist_append(headers, "Host: rocknation.su");
 
         curl = curl_easy_init();
-        if (curl) {
+        if (curl)
+        {
             curl_easy_setopt(curl, CURLOPT_URL, page_url);
             curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -170,7 +178,8 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
 
             res = curl_easy_perform(curl);
 
-            if (res == CURLE_OK) {
+            if (res == CURLE_OK)
+            {
                 const char *pattern = "<a href=\"(\\/mp3\\/album-[0-9]+)\">([0-9]+) - (.*?)<\\/a>";
                 const int options = PCRE_CASELESS;
 
@@ -179,16 +188,19 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
                 int erroffset;
 
                 re = pcre_compile(pattern, options, &error, &erroffset, NULL);
-                if (re != NULL) {
+                if (re != NULL)
+                {
                     int ovector[30];
                     int rc;
 
                     rc = pcre_exec(re, NULL, chunk.memory, chunk.size, 0, 0, ovector, 30);
-                    if (rc == -1) {
+                    if (rc == -1)
+                    {
                         break;
                     }
 
-                    while (rc >= 0) {
+                    while (rc >= 0)
+                    {
                         char *album_url;
                         char *album_name;
                         char *album_year;
@@ -227,16 +239,19 @@ void get_albums(char *band_url, AlbumInfoList *album_list) {
     }
 }
 
-void get_albums_by_name(char* band_name, AlbumInfoList* album_list) {
+void get_albums_by_name(char *band_name, AlbumInfoList *album_list)
+{
     BandInfoList band_list;
     search_band(band_name, &band_list);
 
-     if (band_list.count > 0) {
+    if (band_list.count > 0)
+    {
         get_albums(band_list.bands[0].url, album_list);
-     }
+    }
 }
 
-void get_songs(const char *album_url, SongInfoList *song_list) {
+void get_songs(const char *album_url, SongInfoList *song_list)
+{
     /*
      * Function  : void get_songs(const char *album_url, SongInfoList *song_list)
      * Input     : album_url - pointer to the URL of the album
@@ -244,7 +259,7 @@ void get_songs(const char *album_url, SongInfoList *song_list) {
      * Output    : Updates the song_list with song information
      * Procedure : This function retrieves the list of songs for a given album from rocknation.su. It performs an HTTP request to the album page, processes the HTML response using PCRE regular expressions, and populates the SongInfoList structure with the found songs.
      */
-    
+
     CURL *curl;
     CURLcode res;
 
@@ -257,9 +272,9 @@ void get_songs(const char *album_url, SongInfoList *song_list) {
     struct curl_slist *headers = NULL;
     headers = curl_slist_append(headers, "Host: rocknation.su");
 
-
     curl = curl_easy_init();
-    if (curl) {
+    if (curl)
+    {
         curl_easy_setopt(curl, CURLOPT_URL, album_url);
         curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -267,19 +282,22 @@ void get_songs(const char *album_url, SongInfoList *song_list) {
 
         res = curl_easy_perform(curl);
 
-        if (res == CURLE_OK) {
+        if (res == CURLE_OK)
+        {
             const char *pattern = "(http:\\/\\/rocknation.su\\/upload\\/mp3\\/([a-zA-Z0-9 %]+)\\/([0-9]{4}) - ([a-zA-Z0-9 %]+)\\/([a-zA-Z0-9 %\\.]+))";
             pcre *re;
             const char *error;
             int erroffset;
 
             re = pcre_compile(pattern, NULL, &error, &erroffset, NULL);
-            if (re != NULL) {
+            if (re != NULL)
+            {
                 int ovector[30];
                 int rc;
 
                 rc = pcre_exec(re, NULL, chunk.memory, chunk.size, 0, 0, ovector, 30);
-                while (rc >= 0) {
+                while (rc >= 0)
+                {
                     char *mp3_url;
                     char *artist;
                     char *year;
@@ -324,8 +342,8 @@ void get_songs(const char *album_url, SongInfoList *song_list) {
     }
 }
 
-
-int download_file(const char *url, char *output_file) {
+int download_file(const char *url, char *output_file)
+{
     /*
      * Function  : int download_file(const char *url, char *output_file)
      * Input     : url - pointer to the URL of the file to download
@@ -333,7 +351,7 @@ int download_file(const char *url, char *output_file) {
      * Output    : Downloads the file and returns 0 on success, -1 on failure
      * Procedure : This function downloads a file from the given URL using libcurl. It writes the content to the specified output file. If the output_file is NULL, the function attempts to derive the filename from the URL. The function returns 0 on success and -1 on failure.
      */
-    
+
     CURL *curl;
     CURLcode res;
 
@@ -341,35 +359,46 @@ int download_file(const char *url, char *output_file) {
     chunk.memory = malloc(1);
     chunk.size = 0;
 
-    if (output_file == NULL) {
+    if (output_file == NULL)
+    {
         output_file = get_filename_from_url(url);
     }
 
     url = replace_http(url);
 
     curl = curl_easy_init();
-    if (curl) {
+    if (curl)
+    {
         curl_easy_setopt(curl, CURLOPT_URL, url);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
 
         res = curl_easy_perform(curl);
 
-        if (res == CURLE_OK) {
+        if (res == CURLE_OK)
+        {
             FILE *file = fopen(output_file, "wb");
-            if (file) {
+            if (file)
+            {
                 size_t bytes_written = fwrite(chunk.memory, 1, chunk.size, file);
                 fclose(file);
 
-                if (bytes_written == chunk.size) {
+                if (bytes_written == chunk.size)
+                {
                     printf("File downloaded successfully: %s\n", output_file);
-                } else {
+                }
+                else
+                {
                     printf("Error writing file\n");
                 }
-            } else {
+            }
+            else
+            {
                 printf("Error opening file for writing\n");
             }
-        } else {
+        }
+        else
+        {
             printf("curl_easy_perform failed: %s\n", curl_easy_strerror(res));
         }
 

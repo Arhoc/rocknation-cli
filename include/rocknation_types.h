@@ -15,29 +15,34 @@
 #define MAX_GENRE_LENGTH 100
 #define MAX_SONG_NAME_LENGTH 50
 
-typedef struct {
+typedef struct
+{
     char name[MAX_NAME_LENGTH];
     char url[MAX_URL_LENGTH];
     char genre[MAX_GENRE_LENGTH];
 } BandInfo;
 
-typedef struct {
+typedef struct
+{
     BandInfo bands[10];
     int count;
 } BandInfoList;
 
-typedef struct {
+typedef struct
+{
     char name[MAX_NAME_LENGTH];
     char url[MAX_URL_LENGTH];
     char year[MAX_YEAR_LENGTH];
 } AlbumInfo;
 
-typedef struct {
+typedef struct
+{
     AlbumInfo albums[50];
     int count;
 } AlbumInfoList;
 
-typedef struct {
+typedef struct
+{
     char url[MAX_URL_LENGTH];
     char artist[MAX_NAME_LENGTH];
     char year[MAX_YEAR_LENGTH];
@@ -45,13 +50,14 @@ typedef struct {
     char name[MAX_SONG_NAME_LENGTH];
 } SongInfo;
 
-typedef struct {
+typedef struct
+{
     SongInfo songs[50];
     int count;
 } SongInfoList;
 
-typedef struct {
+typedef struct
+{
     char *memory;
     size_t size;
 } MemoryStruct;
-
